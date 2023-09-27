@@ -1,0 +1,48 @@
+{
+  "info": {
+    "name": "Postman Collection",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Sub Folder",
+      "item": [
+        {
+          "name": "Sub Request",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "google.com",
+              "host": ["google", "com"]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [""]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "exec": [""]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "BASE_URL",
+      "value": "<Your backend's base url specific to your environment>",
+      "type": "string"
+    }
+  ]
+}
