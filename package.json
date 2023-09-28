@@ -4,12 +4,15 @@
 	"description": "Convert your Express app to different types of API documentation",
 	"main": "index.js",
 	"scripts": {
-		"compile": "tsup ./src/cli.ts ./src/api.ts --format esm,cjs,iife --legacy-output"
+		"compile": "tsup ./src/cli.ts ./src/api.ts",
+		"dev": "npm run compile -- --watch"
 	},
 	"keywords": [],
 	"author": "",
 	"license": "MIT",
 	"dependencies": {
+		"chalk": "^4.1.2",
+		"enquirer": "^2.4.1",
 		"express-list-routes": "^1.1.5",
 		"minimist": "^1.2.8"
 	},

@@ -1,5 +1,8 @@
 import fs from "node:fs";
-import { RouteList } from "../types/Routes";
+import path from "node:path";
+
+import { type RouteList } from "../types/Routes";
+import { normalizeOptions } from "./normalize-options";
 
 export type PostmanCollection = {
 	info: {
@@ -29,13 +32,18 @@ export type ConversionOptions = {
 	fileName: string;
 };
 
+export const defaultOptions: ConversionOptions = {
+	flat: true,
+	fileName: "./export.postman_collection.json",
+};
+
 const convertToPostmanCollection = (
 	routes: RouteList,
-	options: ConversionOptions = {
-		flat: true,
-		fileName: "./export.postman_collection.json",
-	}
+	options: Partial<ConversionOptions>
 ) => {
+	options = normalizeOptions(options, defaultOptions);
+	options.fileName = path.resolve(process.cwd(), options.fileName as string);
+
 	const collectionBaseTemplate: PostmanCollection = {
 		info: {
 			name: "Postman Collection",
@@ -80,9 +88,7 @@ const convertToPostmanCollection = (
 				request: {
 					method: route.method,
 					header: [],
-					body: {
-						mode: "",
-					},
+					body: { mode: "" },
 					url: {
 						raw: `{{BASE_URL}}${route.path}`,
 						host: [`{{BASE_URL}}`],
