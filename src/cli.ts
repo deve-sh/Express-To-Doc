@@ -16,6 +16,7 @@ type CLIFlags = {
 	doc?: "Postman";
 	flat?: boolean;
 	fileName?: string;
+	collectionName?: string;
 } & {
 	preBuildStep?: string;
 	appPath?: string;
@@ -122,9 +123,20 @@ async function execute() {
 					})
 				)["flat"];
 
+			if (!("collectionName" in flags))
+				flags.collectionName = (
+					await prompt({
+						type: "input",
+						name: "collectionName",
+						message: "Name of Postman Collection",
+						initial: defaultOptions.collectionName,
+					})
+				)["collectionName"];
+
 			convertToPostmanCollection(routes, {
 				flat: flags.flat,
 				fileName: flags.fileName,
+				collectionName: flags.collectionName,
 			});
 		}
 

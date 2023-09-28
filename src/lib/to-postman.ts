@@ -30,11 +30,13 @@ export type PostmanCollection = {
 export type ConversionOptions = {
 	flat: boolean;
 	fileName: string;
+	collectionName: string;
 };
 
 export const defaultOptions: ConversionOptions = {
 	flat: true,
 	fileName: "./export.postman_collection.json",
+	collectionName: "Postman Collection",
 };
 
 const convertToPostmanCollection = (
@@ -46,7 +48,7 @@ const convertToPostmanCollection = (
 
 	const collectionBaseTemplate: PostmanCollection = {
 		info: {
-			name: "Postman Collection",
+			name: options.collectionName as string,
 			schema: "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		},
 		item: [],
