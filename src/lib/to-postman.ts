@@ -1,8 +1,10 @@
 import fs from "node:fs";
 import path from "node:path";
 
-import { Route, type RouteList } from "../types/Routes";
+import { type RouteList } from "../types/Routes";
+
 import { normalizeOptions } from "./normalize-options";
+import turnFlatRoutesToTree from "./flat-to-tree";
 
 export type PostmanCollection = {
 	info: {
@@ -46,28 +48,6 @@ const getRoutePathFragments = (path: string) =>
 		.split("/")
 		.map((fragment) => fragment.trim())
 		.filter(Boolean);
-
-const nestRoutes = (routes: RouteList) => {
-	const nestedCountMap: Record<string, { count: number; children: Route[] }> =
-		{};
-
-	for (let route of routes) {
-		for (let otherRoute of routes) {
-			if (
-				otherRoute.path.includes(route.path) &&
-				otherRoute.path !== route.path
-			) {
-				if (!nestedCountMap[route.path])
-					nestedCountMap[route.path] = { count: 0, children: [] };
-
-				nestedCountMap[route.path].count++;
-				nestedCountMap[route.path].children.push(otherRoute);
-			}
-		}
-	}
-
-	fs.writeFileSync('routePaths.json', JSON.stringify(nestedCountMap, null, 4));
-};
 
 const convertToPostmanCollection = (
 	routes: RouteList,
@@ -128,20 +108,12 @@ const convertToPostmanCollection = (
 			});
 		}
 	} else {
-		// TODO:
-
 		// Group close routes together
 		// And nest successive paths inside folders
 
-		// Sort route by the lengths of their paths
-		const flatRoutes = [...routes];
-		nestRoutes(flatRoutes)
+		const treeRoutes = turnFlatRoutesToTree(routes);
+		// Go through tree hierarchy and add url, header, body and other info to nested entries.
 	}
-
-	// fs.writeFileSync(
-	// 	options.fileName,
-	// 	JSON.stringify(collectionBaseTemplate, null, 4)
-	// );
 };
 
 export default convertToPostmanCollection;
