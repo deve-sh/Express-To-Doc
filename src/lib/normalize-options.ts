@@ -5,6 +5,8 @@ export const normalizeOptions = (
 	const optionsObject = {} as Record<string, unknown>;
 	for (let key in defaultOptions)
 		optionsObject[key] =
-			opts[key] !== undefined ? opts[key] : defaultOptions[key];
+			opts[key] !== undefined && opts[key] !== ""
+				? opts[key]
+				: defaultOptions[key];
 	return optionsObject;
 };
