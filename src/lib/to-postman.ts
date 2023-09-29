@@ -1,7 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 
-import { type RouteList } from "../types/Routes";
+import { Route, type RouteList } from "../types/Routes";
 import { normalizeOptions } from "./normalize-options";
 
 export type PostmanCollection = {
@@ -17,6 +17,8 @@ export type PostmanCollection = {
 			body: { mode: string };
 			url: { raw: string; path: string[]; host: string[] };
 		};
+		// Nested folders or requests
+		item?: PostmanCollection["item"];
 	}[];
 	event: {
 		listen: string;
@@ -37,6 +39,34 @@ export const defaultOptions: ConversionOptions = {
 	flat: true,
 	fileName: "./export.postman_collection.json",
 	collectionName: "Postman Collection",
+};
+
+const getRoutePathFragments = (path: string) =>
+	path
+		.split("/")
+		.map((fragment) => fragment.trim())
+		.filter(Boolean);
+
+const nestRoutes = (routes: RouteList) => {
+	const nestedCountMap: Record<string, { count: number; children: Route[] }> =
+		{};
+
+	for (let route of routes) {
+		for (let otherRoute of routes) {
+			if (
+				otherRoute.path.includes(route.path) &&
+				otherRoute.path !== route.path
+			) {
+				if (!nestedCountMap[route.path])
+					nestedCountMap[route.path] = { count: 0, children: [] };
+
+				nestedCountMap[route.path].count++;
+				nestedCountMap[route.path].children.push(otherRoute);
+			}
+		}
+	}
+
+	fs.writeFileSync('routePaths.json', JSON.stringify(nestedCountMap, null, 4));
 };
 
 const convertToPostmanCollection = (
@@ -79,12 +109,10 @@ const convertToPostmanCollection = (
 
 	if (options.flat) {
 		for (const route of routes) {
-			const routePathFragments = route.path
-				.split("/")
-				.map((str) => str.trim())
-				.filter(Boolean);
-
+			// Clean route path
+			const routePathFragments = getRoutePathFragments(route.path);
 			const routeName = routePathFragments.join("/") || "/";
+
 			collectionBaseTemplate.item.push({
 				name: routeName,
 				request: {
@@ -104,16 +132,16 @@ const convertToPostmanCollection = (
 
 		// Group close routes together
 		// And nest successive paths inside folders
+
+		// Sort route by the lengths of their paths
 		const flatRoutes = [...routes];
-		const nestedRoutes = [];
-		for (let route of flatRoutes) {
-		}
+		nestRoutes(flatRoutes)
 	}
 
-	fs.writeFileSync(
-		options.fileName,
-		JSON.stringify(collectionBaseTemplate, null, 4)
-	);
+	// fs.writeFileSync(
+	// 	options.fileName,
+	// 	JSON.stringify(collectionBaseTemplate, null, 4)
+	// );
 };
 
 export default convertToPostmanCollection;
