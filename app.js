@@ -3,7 +3,9 @@ const app = require("express")();
 const authRouter = require("./router");
 
 app.get("/", (req, res) => res.sendStatus(200));
+app.post("/abc", (req, res) => res.sendStatus(200));
 app.post("/abc/:bcd", (req, res) => res.sendStatus(200));
+app.post("/abc/:bcd/:def/:efg", (req, res) => res.sendStatus(200));
 
 app.use("/auth", authRouter);
 

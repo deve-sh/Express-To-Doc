@@ -23,7 +23,9 @@ type CLIFlags = {
 	moduleName?: string;
 };
 
-const flags = minimist(process.argv.slice(2)) as unknown as CLIFlags;
+const flags = minimist(process.argv.slice(2), {
+	boolean: ['flat']
+}) as unknown as CLIFlags;
 
 // converters
 import convertToPostmanCollection from "./lib/to-postman";
@@ -60,8 +62,14 @@ async function execute() {
 				})
 			)["moduleName"];
 
-		if (flags.preBuildStep)
+		if (flags.preBuildStep) {
+			warn(
+				chalk.yellow(
+					"Running pre-build script. Please wait before proceeding."
+				)
+			);
 			execSync(flags.preBuildStep, { stdio: "inherit" });
+		}
 
 		// Optional TODO: Add an export statement yourself if there isn't one in the specified file.
 		flags.appPath = path.resolve(process.cwd(), flags.appPath as string);
