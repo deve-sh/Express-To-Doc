@@ -5,6 +5,7 @@ import { type RouteList } from "../types/Routes";
 
 import { normalizeOptions } from "./normalize-options";
 import turnFlatRoutesToTree from "./flat-to-tree";
+import Flattener from "./flat-to-tree";
 
 export type PostmanCollection = {
 	info: {
@@ -111,9 +112,32 @@ const convertToPostmanCollection = (
 		// Group close routes together
 		// And nest successive paths inside folders
 
-		const treeRoutes = turnFlatRoutesToTree(routes);
-		// Go through tree hierarchy and add url, header, body and other info to nested entries.
+		const flattener = new Flattener({
+			hierarchyFieldName: "item",
+			processRouteMatch(route, relativePath) {
+				return {
+					name: relativePath,
+					request: {
+						method: route.method,
+						header: [],
+						body: { mode: "" },
+						url: {
+							raw: `{{BASE_URL}}${route.path}`,
+							host: [`{{BASE_URL}}`],
+							path: getRoutePathFragments(route.path),
+						},
+					},
+				};
+			},
+		});
+		const treeRoutes = flattener.turnFlatRoutesToTree(routes);
+		collectionBaseTemplate.item = treeRoutes;
 	}
+
+	fs.writeFileSync(
+		options.fileName,
+		JSON.stringify(collectionBaseTemplate, null, 4)
+	);
 };
 
 export default convertToPostmanCollection;
