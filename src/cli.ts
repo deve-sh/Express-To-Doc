@@ -20,7 +20,7 @@ type CLIFlags = {
 	fileName?: string;
 	collectionName?: string;
 } & {
-	preBuildStep?: string;
+	buildStep?: string;
 	appPath?: string;
 	moduleName?: string;
 };
@@ -43,15 +43,15 @@ async function execute() {
 				})
 			)["appPath"];
 
-		if (!("preBuildStep" in flags)) {
-			flags.preBuildStep = (
+		if (!("buildStep" in flags)) {
+			flags.buildStep = (
 				await prompt({
 					type: "input",
-					name: "preBuildStep",
+					name: "buildStep",
 					message:
 						"Any pre-build steps to your app? If you're using a compiler like TypeScript:",
 				})
-			)["preBuildStep"];
+			)["buildStep"];
 		}
 
 		if (!("moduleName" in flags))
@@ -64,13 +64,13 @@ async function execute() {
 				})
 			)["moduleName"];
 
-		if (flags.preBuildStep) {
+		if (flags.buildStep) {
 			warn(
 				chalk.yellow(
 					"Running pre-build script. Please wait before proceeding."
 				)
 			);
-			execSync(flags.preBuildStep, { stdio: "inherit" });
+			execSync(flags.buildStep, { stdio: "inherit" });
 		}
 
 		// Optional TODO: Add an export statement yourself if there isn't one in the specified file.
