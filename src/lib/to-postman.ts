@@ -4,8 +4,9 @@ import path from "node:path";
 import { type RouteList } from "../types/Routes";
 
 import { normalizeOptions } from "./normalize-options";
-import turnFlatRoutesToTree from "./flat-to-tree";
+import { log } from "./log";
 import Flattener from "./flat-to-tree";
+import chalk from "chalk";
 
 export type PostmanCollection = {
 	info: {
@@ -55,7 +56,10 @@ const convertToPostmanCollection = (
 	options: Partial<ConversionOptions>
 ) => {
 	options = normalizeOptions(options, defaultOptions);
-	options.fileName = path.resolve(process.cwd(), options.fileName as string);
+	const fullFileName = path.resolve(
+		process.cwd(),
+		options.fileName as string
+	);
 
 	const collectionBaseTemplate: PostmanCollection = {
 		info: {
@@ -117,8 +121,8 @@ const convertToPostmanCollection = (
 		const processedFlatRoutes = [...routes];
 		for (let i = 0; i < processedFlatRoutes.length; i++) {
 			for (let j = 0; j < processedFlatRoutes.length; j++) {
-				if(j === i) continue;
-				
+				if (j === i) continue;
+
 				const baseRoutePath = processedFlatRoutes[i].path;
 				const childRoutePath = processedFlatRoutes[j].path;
 				const hasSlashAtTheEnd = baseRoutePath.endsWith("/");
@@ -153,9 +157,21 @@ const convertToPostmanCollection = (
 		collectionBaseTemplate.item = treeRoutes;
 	}
 
+	log(chalk.yellow("Read app, exporting collection file."));
 	fs.writeFileSync(
-		options.fileName,
+		fullFileName,
 		JSON.stringify(collectionBaseTemplate, null, 4)
+	);
+	log(
+		chalk.green(
+			"Collection file exported successfully to:",
+			options.fileName
+		)
+	);
+	log(
+		chalk.blue(
+			"See https://learning.postman.com/docs/getting-started/importing-and-exporting/importing-data/ for guide  on how to import your Postman collection."
+		)
 	);
 };
 
