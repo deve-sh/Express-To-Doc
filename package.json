@@ -1,6 +1,6 @@
 {
 	"name": "express-to-doc",
-	"version": "0.0.8",
+	"version": "0.0.9",
 	"description": "Convert your Express app to different types of API documentation. Currently supports Postman Collections.",
 	"main": "cli.js",
 	"scripts": {

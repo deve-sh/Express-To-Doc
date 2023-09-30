@@ -31,7 +31,7 @@ npx convert-express-app-to-doc
 
 This starts a CLI session with options to export your Express app to a collection/documentation file.
 
-![CLI Session](./doc-assets/cli-session.PNG)
+![CLI Session](https://raw.githubusercontent.com/deve-sh/Express-To-Doc/main/doc-assets/cli-session.PNG)
 
 ### Passing options via CLI Flags
 
