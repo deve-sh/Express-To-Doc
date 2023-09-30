@@ -1,9 +1,10 @@
-// Ref: https://stackoverflow.com/a/45075542
+// Algo Ref: https://stackoverflow.com/a/45075542
 
 import type { Route } from "../types/Routes";
 
 type HierarchyNode = {
 	path: "root" | string;
+	name?: string;
 	children?: HierarchyNode[];
 	fullPath?: string;
 	relativePath?: string;
@@ -76,8 +77,8 @@ class Flattener {
 			);
 
 			if (matchingRoute)
-				hierarchy[i] = {
-					...((this.processRouteMatch
+				hierarchy[i] = (
+					this.processRouteMatch
 						? this.processRouteMatch(matchingRoute, node.path)
 						: {
 								...node,
@@ -85,8 +86,9 @@ class Flattener {
 								path: node.path,
 								relativePath: node.path,
 								fullPath: matchingRoute.path,
-						  }) as HierarchyNode),
-				};
+						  }
+				) as HierarchyNode;
+			else hierarchy[i].name = node.path;
 
 			if (!node[this.hierarchyFieldName]?.length) continue;
 			hierarchy[i][this.hierarchyFieldName] =

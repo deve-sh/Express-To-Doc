@@ -112,6 +112,25 @@ const convertToPostmanCollection = (
 		// Group close routes together
 		// And nest successive paths inside folders
 
+		// Pre-process list of flat routes, find any routes that are parent of other routes and add `/` at the end.
+		// This is due to the way our tree-building algo works and just nests path under path
+		const processedFlatRoutes = [...routes];
+		for (let i = 0; i < processedFlatRoutes.length; i++) {
+			for (let j = 0; j < processedFlatRoutes.length; j++) {
+				if(j === i) continue;
+				
+				const baseRoutePath = processedFlatRoutes[i].path;
+				const childRoutePath = processedFlatRoutes[j].path;
+				const hasSlashAtTheEnd = baseRoutePath.endsWith("/");
+				const isAFolderButAlsoRoute =
+					childRoutePath.includes(baseRoutePath);
+
+				if (!hasSlashAtTheEnd && isAFolderButAlsoRoute) {
+					processedFlatRoutes[i].path = baseRoutePath.concat("/");
+					break;
+				}
+			}
+		}
 		const flattener = new Flattener({
 			hierarchyFieldName: "item",
 			processRouteMatch(route, relativePath) {
