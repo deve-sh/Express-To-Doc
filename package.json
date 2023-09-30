@@ -1,6 +1,6 @@
 {
 	"name": "express-to-doc",
-	"version": "0.0.9",
+	"version": "1.0.0",
 	"description": "Convert your Express app to different types of API documentation. Currently supports Postman Collections.",
 	"main": "cli.js",
 	"scripts": {
@@ -9,9 +9,11 @@
 		"pre-publish": "npm run compile && node ./scripts/pre-publish",
 		"publish-as-package": "npm run pre-publish && cd ./dist && npm publish"
 	},
-	"keywords": [],
-	"author": "",
+	"keywords": ["exporter", "postman", "express", "api", "documentation"],
+	"author": "Devesh Kumar",
 	"license": "MIT",
+	"repository": "https://github.com/deve-sh/Express-To-Doc",
+	"readme": "https://github.com/deve-sh/Express-To-Doc/tree/main#readme",
 	"dependencies": {
 		"chalk": "^4.1.2",
 		"enquirer": "^2.4.1",
