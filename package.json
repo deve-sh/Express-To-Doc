@@ -1,11 +1,13 @@
 {
 	"name": "express-to-doc",
-	"version": "1.0.0",
-	"description": "Convert your Express app to different types of API documentation",
-	"main": "index.js",
+	"version": "0.0.8",
+	"description": "Convert your Express app to different types of API documentation. Currently supports Postman Collections.",
+	"main": "cli.js",
 	"scripts": {
-		"compile": "tsup ./src/cli.ts ./src/api.ts",
-		"dev": "npm run compile -- --watch"
+		"compile": "tsup ./src/cli.ts",
+		"dev": "npm run compile -- --watch",
+		"pre-publish": "npm run compile && node ./scripts/pre-publish",
+		"publish-as-package": "npm run pre-publish && cd ./dist && npm publish"
 	},
 	"keywords": [],
 	"author": "",
@@ -21,5 +23,8 @@
 		"express": "^4.18.2",
 		"tsup": "^7.2.0",
 		"typescript": "^5.2.2"
+	},
+	"bin": {
+		"express-to-doc": "./cli.js"
 	}
 }

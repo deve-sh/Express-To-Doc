@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 import path from "node:path";
 import { execSync } from "child_process";
 import expressListRoutes from "express-list-routes";
