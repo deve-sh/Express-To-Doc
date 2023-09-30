@@ -26,7 +26,7 @@ type CLIFlags = {
 };
 
 const flags = minimist(process.argv.slice(2), {
-	boolean: ['flat']
+	boolean: ["flat"],
 }) as unknown as CLIFlags;
 
 // converters
@@ -99,6 +99,7 @@ async function execute() {
 					type: "multiselect",
 					name: "doc",
 					message: "Type of documentation you want to export?",
+					// @ts-expect-error Incorrect types in enquirer
 					choices: [
 						{
 							name: "Postman",
@@ -106,9 +107,12 @@ async function execute() {
 							hint: "Generates a basic Postman Collection file for you to import and get started with",
 						},
 					],
+					initial: ["Postman"],
 					maxChoices: 1,
 				})
 			)["doc"][0];
+		// If there is no default option
+		flags.doc = flags.doc || "Postman";
 
 		if (flags.doc === "Postman") {
 			const { defaultOptions } = await import("./lib/to-postman");
